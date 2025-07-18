@@ -7,7 +7,9 @@ from sqlmodel import Session
 
 from ...db.session import get_session
 from ...models.course import Course, CourseCreate, CourseRead, CourseUpdate
+from ...models.user import User
 from ...services.course_service import CourseService
+from ..deps import get_current_active_user, get_current_instructor_user
 
 router = APIRouter()
 course_service = CourseService()
@@ -34,6 +36,7 @@ def create_course(
     *,
     db: Session = Depends(get_session),
     course_in: CourseCreate,
+    current_user: User = Depends(get_current_instructor_user),
 ) -> Any:
     """Create course."""
     course = course_service.get_by_title(db=db, title=course_in.title)
@@ -64,6 +67,7 @@ def update_course(
     db: Session = Depends(get_session),
     course_id: int,
     course_in: CourseUpdate,
+    current_user: User = Depends(get_current_instructor_user),
 ) -> Any:
     """Update course."""
     course = course_service.get(db=db, id=course_id)
@@ -77,6 +81,7 @@ def delete_course(
     *,
     db: Session = Depends(get_session),
     course_id: int,
+    current_user: User = Depends(get_current_instructor_user),
 ) -> Any:
     """Delete course."""
     course = course_service.get(db=db, id=course_id)

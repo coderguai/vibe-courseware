@@ -12,6 +12,8 @@ from src.vibe_courseware.db.session import engine, init_db
 from src.vibe_courseware.models.course import Course, CourseCreate
 from src.vibe_courseware.models.module import Module, ModuleCreate
 from src.vibe_courseware.models.lesson import Lesson, LessonCreate, LessonType
+from src.vibe_courseware.models.user import User, UserRole
+from src.vibe_courseware.utils.security import get_password_hash
 
 
 def create_sample_data() -> None:
@@ -25,6 +27,39 @@ def create_sample_data() -> None:
             print("Database already contains data. Skipping sample data creation.")
             return
 
+        # Create admin user
+        admin_user = User(
+            email="admin@example.com",
+            username="admin",
+            full_name="Admin User",
+            hashed_password=get_password_hash("admin123"),
+            is_active=True,
+            role=UserRole.ADMIN,
+        )
+        session.add(admin_user)
+        
+        # Create instructor user
+        instructor_user = User(
+            email="instructor@example.com",
+            username="instructor",
+            full_name="Instructor User",
+            hashed_password=get_password_hash("instructor123"),
+            is_active=True,
+            role=UserRole.INSTRUCTOR,
+        )
+        session.add(instructor_user)
+        
+        # Create student user
+        student_user = User(
+            email="student@example.com",
+            username="student",
+            full_name="Student User",
+            hashed_password=get_password_hash("student123"),
+            is_active=True,
+            role=UserRole.STUDENT,
+        )
+        session.add(student_user)
+        
         # Create courses
         python_course = Course(
             title="Python Programming",
